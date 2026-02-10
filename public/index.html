@@ -274,10 +274,14 @@
             justify-content: center;
             margin: 0 auto 20px;
             color: var(--text-secondary);
+            overflow: hidden;
         }
 
-        .qr-placeholder i {
-            font-size: 48px;
+        .qr-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
         }
 
         .modal {
@@ -494,7 +498,7 @@
                         <input 
                             type="number" 
                             id="limit" 
-                            value="10" 
+                            value="50" 
                             required>
                     </div>
 
@@ -555,7 +559,7 @@
                 <p>If you find this tool helpful, consider supporting its development:</p>
                     
                 <div class="qr-placeholder">
-                    <i class="fas fa-qrcode"></i>
+                    <img src="https://i.ibb.co/HfKJjYzH/GCash-My-QR-05012026134509-PNG-2.jpg" alt="Donation QR Code" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\"fas fa-qrcode\">
                 </div>
                 <p>Scan to donate via GCash</p>
                 <p><small>Your support helps keep this tool free and improved!</small></p>
@@ -833,7 +837,7 @@
 
         // Donation Functions
         function copyDonationInfo() {
-            navigator.clipboard.writeText('09171234567')
+            navigator.clipboard.writeText('09979939317')
                 .then(() => {
                     showAlert('GCash number copied to clipboard!', 'success');
                 })
