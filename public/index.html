@@ -490,12 +490,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="limit">Number of Shares (1-50)</label>
+                        <label for="limit">Number of Shares</label>
                         <input 
                             type="number" 
                             id="limit" 
-                            min="1" 
-                            max="50" 
                             value="10" 
                             required>
                     </div>
@@ -555,13 +553,13 @@
             <div class="card donation-section">
                 <h2><i class="fas fa-heart"></i> Support This Project</h2>
                 <p>If you find this tool helpful, consider supporting its development:</p>
-                
+                    
                 <div class="qr-placeholder">
                     <i class="fas fa-qrcode"></i>
                 </div>
                 <p>Scan to donate via GCash</p>
                 <p><small>Your support helps keep this tool free and improved!</small></p>
-                
+                    
                 <div style="margin-top: 20px;">
                     <button class="btn btn-success" onclick="copyDonationInfo()">
                         <i class="fas fa-copy"></i> Copy GCash Number
@@ -586,7 +584,7 @@
             const html = document.documentElement;
             const themeIcon = document.getElementById('themeIcon');
             const favicon = document.getElementById('favicon');
-            
+                
             if (html.getAttribute('data-theme') === 'dark') {
                 html.setAttribute('data-theme', 'light');
                 themeIcon.className = 'fas fa-moon';
@@ -604,15 +602,15 @@
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
             document.getElementById('themeIcon').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-            
+                
             // Set current date in privacy policy
             document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
-            
+                
             // Show privacy modal on first visit
             if (!localStorage.getItem('privacyAccepted')) {
                 setTimeout(showPrivacyModal, 500);
             }
-            
+                
             // Load history and running shares
             loadHistory();
             loadRunningShares();
@@ -639,36 +637,36 @@
         // Share Form Submission
         document.getElementById('shareForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+                
             if (!localStorage.getItem('privacyAccepted')) {
                 alert('Please accept the Privacy Policy first.');
                 showPrivacyModal();
                 return;
             }
-            
+                
             const cookie = document.getElementById('cookie').value.trim();
             const link = document.getElementById('link').value.trim();
             const limit = document.getElementById('limit').value;
-            
+                
             if (!cookie || !link || !limit) {
                 showAlert('Please fill all fields', 'error');
                 return;
             }
-            
+                
             // Start sharing process
             const shareBtn = document.getElementById('shareBtn');
             const progressContainer = document.getElementById('progressContainer');
             const progressFill = document.getElementById('progressFill');
             const currentProgress = document.getElementById('currentProgress');
             const totalProgress = document.getElementById('totalProgress');
-            
+                
             shareBtn.disabled = true;
             shareBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
             progressContainer.style.display = 'block';
             progressFill.style.width = '0%';
             currentProgress.textContent = '0';
             totalProgress.textContent = limit;
-            
+                
             try {
                 const response = await fetch('/api/share', {
                     method: 'POST',
@@ -681,14 +679,14 @@
                         limit: limit
                     })
                 });
-                
+                    
                 const data = await response.json();
-                
+                    
                 if (data.status) {
                     showAlert(data.message, 'success');
                     // Simulate progress (in real app, you'd use WebSocket for real-time updates)
                     simulateProgress(limit, progressFill, currentProgress);
-                    
+                        
                     // Wait a bit then reload history
                     setTimeout(() => {
                         loadHistory();
@@ -703,7 +701,7 @@
             } finally {
                 shareBtn.disabled = false;
                 shareBtn.innerHTML = '<i class="fas fa-rocket"></i> Start Sharing';
-                
+                    
                 // Hide progress after completion
                 setTimeout(() => {
                     progressContainer.style.display = 'none';
@@ -719,7 +717,7 @@
                 const percentage = (current / limit) * 100;
                 progressFill.style.width = `${Math.min(percentage, 100)}%`;
                 currentProgress.textContent = current;
-                
+                    
                 if (current >= limit) {
                     clearInterval(interval);
                 }
@@ -730,14 +728,14 @@
         async function loadHistory() {
             const historyLoading = document.getElementById('historyLoading');
             const historyContent = document.getElementById('historyContent');
-            
+                
             historyLoading.style.display = 'block';
             historyContent.style.display = 'none';
-            
+                
             try {
                 const response = await fetch('/api/history');
                 const data = await response.json();
-                
+                    
                 if (data.status && data.history.length > 0) {
                     const historyHTML = data.history.map(item => `
                         <div class="history-item">
@@ -758,7 +756,7 @@
                             </div>
                         </div>
                     `).join('');
-                    
+                        
                     historyContent.innerHTML = historyHTML;
                     historyContent.style.display = 'block';
                     historyLoading.style.display = 'none';
@@ -780,15 +778,15 @@
             const runningLoading = document.getElementById('runningLoading');
             const runningContent = document.getElementById('runningContent');
             const noRunningShares = document.getElementById('noRunningShares');
-            
+                
             runningLoading.style.display = 'block';
             runningContent.style.display = 'none';
             noRunningShares.style.display = 'none';
-            
+                
             try {
                 const response = await fetch('/api/running-shares');
                 const data = await response.json();
-                
+                    
                 if (data.status && data.running_shares.length > 0) {
                     const runningHTML = data.running_shares.map(item => `
                         <div class="history-item">
@@ -813,7 +811,7 @@
                             </div>
                         </div>
                     `).join('');
-                    
+                        
                     runningContent.innerHTML = runningHTML;
                     runningContent.style.display = 'block';
                     noRunningShares.style.display = 'none';
@@ -850,7 +848,7 @@
             alertDiv.textContent = message;
             alertDiv.className = `alert alert-${type}`;
             alertDiv.style.display = 'block';
-            
+                
             setTimeout(() => {
                 alertDiv.style.display = 'none';
             }, 5000);
