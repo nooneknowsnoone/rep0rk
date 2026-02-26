@@ -3,13 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Share Tool - Facebook Share Tool</title>
-    <script>
-        // Redirect to the main app page
-        window.location.href = '/';
-    </script>
+    <title>Share History - AuraShare</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 20px;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .back-btn {
+            text-decoration: none;
+            color: #1b74e4;
+            font-weight: 500;
+        }
+        h1 {
+            color: #1b74e4;
+        }
+        .history-list {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .history-item {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        .status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status.success {
+            background: #e6f7ec;
+            color: #0f973d;
+        }
+        .status.failed {
+            background: #fee9e7;
+            color: #c7362b;
+        }
+    </style>
 </head>
 <body>
-    <p>Redirecting to the main application...</p>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-clock-rotate-left"></i> Share History</h1>
+            <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        </div>
+        
+        <div class="history-list">
+            <% if (history && history.length > 0) { %>
+                <% history.forEach(item => { %>
+                    <div class="history-item">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 500;"><%= item.link.substring(0, 50) %>...</span>
+                            <span class="status <%= item.status === 'completed' ? 'success' : 'failed' %>">
+                                <%= item.status %>
+                            </span>
+                        </div>
+                        <div style="margin-top: 10px; color: #64748b; font-size: 0.9rem;">
+                            ✅ <%= item.success %>/<%= item.requested %> shares · 
+                            <%= new Date(item.startTime).toLocaleString() %>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p style="text-align: center; color: #64748b;">No share history yet</p>
+            <% } %>
+        </div>
+    </div>
 </body>
 </html>
