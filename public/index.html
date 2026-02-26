@@ -1,9 +1,790 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="light">
 <head>
-    <meta http-equiv="refresh" content="0; url=/" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraShare · actual running & history</title>
+    <!-- font awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        :root {
+            --bg-main: #f4f7fb;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
+            --border-light: #e2e8f0;
+            --accent: #1b74e4;
+            --accent-soft: #e7f0ff;
+            --accent-dark: #0a5cbf;
+            --success: #0f973d;
+            --success-bg: #e6f7ec;
+            --warning: #b6560b;
+            --warning-bg: #fff1e0;
+            --danger: #c7362b;
+            --danger-bg: #fee9e7;
+            --shadow-sm: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,20,40,0.05);
+            --shadow-md: 0 12px 30px rgba(0,0,0,0.04), 0 4px 10px rgba(0,0,0,0.03);
+            --radius-xl: 24px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --transition: all 0.15s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #0f1217;
+            --bg-surface: #1a1e27;
+            --bg-card: #222833;
+            --text-primary: #edf2f7;
+            --text-secondary: #a0afc0;
+            --text-tertiary: #7f8b9f;
+            --border-light: #2e3645;
+            --accent: #3b82f6;
+            --accent-soft: #1e2a47;
+            --success: #22c55e;
+            --success-bg: #1a3324;
+            --warning: #f59e0b;
+            --warning-bg: #332819;
+            --danger: #ef4444;
+            --danger-bg: #3b2320;
+            --shadow-sm: 0 8px 20px rgba(0,0,0,0.5);
+            --shadow-md: 0 12px 30px rgba(0,0,0,0.7);
+        }
+
+        .app-wrapper {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* header */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-surface);
+            padding: 10px 20px 10px 16px;
+            border-radius: 60px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo-icon {
+            background: var(--accent);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 1.4rem;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-badge {
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 30px;
+            margin-left: 6px;
+        }
+
+        .theme-toggle {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 26px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 26px;
+        }
+
+        .card-header i {
+            font-size: 1.8rem;
+            color: var(--accent);
+            background: var(--accent-soft);
+            padding: 10px;
+            border-radius: 18px;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .tooltip-icon {
+            color: var(--text-tertiary);
+            cursor: help;
+            position: relative;
+        }
+
+        .tooltip-icon:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 130%;
+            left: 0;
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            width: 200px;
+            box-shadow: var(--shadow-md);
+            pointer-events: none;
+            z-index: 20;
+            font-weight: normal;
+        }
+
+        textarea, input {
+            width: 100%;
+            background: var(--bg-main);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            transition: var(--transition);
+            resize: vertical;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-soft);
+        }
+
+        .btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 14px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            box-shadow: 0 6px 14px rgba(27, 116, 228, 0.2);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--accent-dark);
+            transform: scale(1.02);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-success {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        .progress-panel {
+            background: var(--bg-main);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: var(--border-light);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #4f9cf7);
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.3s;
+        }
+
+        /* history & running items - same style */
+        .history-item, .running-item {
+            background: var(--bg-main);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-light);
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 50px;
+            background: var(--text-tertiary);
+            color: white;
+        }
+
+        .status-processing {
+            background: var(--warning);
+            color: black;
+        }
+        .status-completed {
+            background: var(--success);
+        }
+        .status-failed {
+            background: var(--danger);
+        }
+
+        .donation-section .qr-box {
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 24px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--border-light);
+            overflow: hidden;
+        }
+        .qr-box img {
+            width: 100%; height: 100%; object-fit: contain;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            max-width: 500px;
+            width: 90%;
+            padding: 32px;
+            border: 1px solid var(--border-light);
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .alert {
+            padding: 14px 20px;
+            border-radius: 60px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+        }
+        .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success); }
+        .alert-error { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+        }
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border-light);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .footer-note {
+            margin-top: 32px;
+            text-align: center;
+            color: var(--text-tertiary);
+        }
+        .inline-link { color: var(--accent); text-decoration: none; font-weight: 500; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <p>Redirecting to <a href="/">home</a>...</p>
+<div class="app-wrapper">
+    <!-- privacy modal -->
+    <div class="modal-overlay" id="privacyModal">
+        <div class="modal-content">
+            <div class="flex-between" style="margin-bottom: 24px;">
+                <h2><i class="fas fa-shield-halved" style="color: var(--accent);"></i> Privacy</h2>
+                <button class="btn btn-outline" style="padding: 8px 16px;" onclick="closePrivacyModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <p style="margin-bottom: 20px;">Client-side only · no storage</p>
+            <label style="display: flex; align-items: center; gap: 12px; background: var(--bg-main); padding: 12px; border-radius: 60px;">
+                <input type="checkbox" id="agreeCheckbox"> <span>I agree to the terms</span>
+            </label>
+            <button class="btn btn-primary" style="width:100%; margin-top:24px;" onclick="acceptPrivacy()">Continue</button>
+        </div>
+    </div>
+
+    <!-- header -->
+    <div class="header-bar">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fab fa-facebook-f"></i></div>
+            <span class="logo-text">AuraShare</span>
+            <span class="logo-badge">only real data</span>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button>
+    </div>
+
+    <div id="alertMessage" class="alert"></div>
+
+    <div class="dashboard-grid">
+        <!-- left: share tool -->
+        <div class="card">
+            <div class="card-header"><i class="fas fa-paper-plane"></i><h2>Share composer</h2></div>
+            <form id="shareForm">
+                <div class="input-label">
+                    <i class="fas fa-key"></i> Cookie
+                    <span class="tooltip-icon" data-tooltip="c_user=xxx; xs=xxx"><i class="far fa-question-circle"></i></span>
+                </div>
+                <textarea id="cookie" placeholder="c_user=12345; xs=abcd..." rows="2" required></textarea>
+
+                <div style="margin-top:18px;" class="input-label"><i class="fas fa-link"></i> Post URL</div>
+                <input type="url" id="link" placeholder="https://www.facebook.com/.../posts/..." required>
+
+                <div style="margin-top:18px;" class="input-label"><i class="fas fa-hashtag"></i> Share count</div>
+                <input type="number" id="limit" value="50" min="1" max="1000" required>
+
+                <!-- progress area -->
+                <div id="progressContainer" style="display: none; margin-top: 24px;" class="progress-panel">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span><i class="fas fa-chart-line"></i> Current share</span>
+                        <span id="currentShareId"></span>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9rem;">
+                        Status: <span id="shareStatus">Processing...</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:28px;" id="shareBtn">
+                    <i class="fas fa-rocket"></i> Start sharing
+                </button>
+            </form>
+        </div>
+
+        <!-- right side: running + history -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <!-- now running -->
+            <div class="card">
+                <div class="card-header" style="margin-bottom: 16px;">
+                    <i class="fas fa-sync-alt fa-spin" style="color: var(--warning);"></i>
+                    <h2>Now running</h2>
+                </div>
+                <div id="runningShares" style="min-height: 100px;">
+                    <div class="loading-spinner" id="runningLoading"><div class="spinner"></div><span>loading...</span></div>
+                    <div id="runningContent" style="display: none;"></div>
+                    <div id="noRunningShares" style="display: none; color: var(--text-tertiary); text-align: center; padding: 20px;">✨ no active shares</div>
+                </div>
+                <button class="btn btn-outline" style="width: 100%; margin-top: 12px;" onclick="loadRunningShares()"><i class="fas fa-redo-alt"></i> refresh</button>
+            </div>
+
+            <!-- history -->
+            <div class="card">
+                <div class="card-header" style="margin-bottom: 16px;">
+                    <i class="fas fa-clock-rotate-left"></i>
+                    <h2>History</h2>
+                </div>
+                <div id="historyList">
+                    <div class="loading-spinner" id="historyLoading"><div class="spinner"></div></div>
+                    <div id="historyContent" style="display: none;"></div>
+                </div>
+                <button class="btn btn-outline" style="width: 100%; margin-top: 12px;" onclick="loadHistory()"><i class="fas fa-history"></i> refresh history</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- donation row -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <i class="fas fa-heart" style="font-size: 2.2rem; color: var(--danger);"></i>
+                <div><h3>Support</h3><p style="color: var(--text-secondary);">every coffee helps</p></div>
+            </div>
+            <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-success" onclick="copyDonationInfo()"><i class="fas fa-copy"></i> GCash 0997 993 9317</button>
+                <button class="btn btn-outline" onclick="alert('thanks 💙')"><i class="fas fa-star"></i> sponsor</button>
+            </div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div class="qr-box">
+                <img src="https://i.ibb.co/HfKJjYzH/GCash-My-QR-05012026134509-PNG-2.jpg" alt="QR" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%23f0f0f0\'/%3E%3C/svg%3E';">
+            </div>
+            <p style="color: var(--text-secondary);"><i class="fas fa-camera"></i> scan via GCash</p>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        © 2025 · <a onclick="showPrivacyModal()" class="inline-link">privacy</a> · only actual shares shown
+    </div>
+</div>
+
+<script>
+    // ================== THEME ==================
+    function toggleTheme() {
+        const html = document.documentElement;
+        const icon = document.getElementById('themeIcon');
+        if (html.getAttribute('data-theme') === 'dark') {
+            html.setAttribute('data-theme', 'light');
+            icon.className = 'fas fa-moon';
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            icon.className = 'fas fa-sun';
+        }
+        localStorage.setItem('theme', html.getAttribute('data-theme'));
+    }
+    
+    (function() {
+        const saved = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        document.getElementById('themeIcon').className = saved === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        if (!localStorage.getItem('privacyAccepted')) setTimeout(showPrivacyModal, 300);
+    })();
+
+    // ================== MODAL ==================
+    const modal = document.getElementById('privacyModal');
+    window.showPrivacyModal = () => modal.style.display = 'flex';
+    window.closePrivacyModal = () => modal.style.display = 'none';
+    window.acceptPrivacy = () => {
+        if (document.getElementById('agreeCheckbox').checked) {
+            localStorage.setItem('privacyAccepted', 'true');
+            closePrivacyModal();
+        } else alert('Please agree to the terms');
+    };
+
+    // ================== TOAST/ALERT ==================
+    function showAlert(msg, type) {
+        const a = document.getElementById('alertMessage');
+        a.textContent = msg;
+        a.className = `alert alert-${type}`;
+        a.style.display = 'block';
+        setTimeout(() => a.style.display = 'none', 3000);
+    }
+
+    // ================== SHARE FORM ==================
+    document.getElementById('shareForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!localStorage.getItem('privacyAccepted')) {
+            showAlert('Please accept privacy first', 'error');
+            showPrivacyModal();
+            return;
+        }
+
+        const cookie = document.getElementById('cookie').value.trim();
+        const link = document.getElementById('link').value.trim();
+        const limit = parseInt(document.getElementById('limit').value);
+        
+        if (!cookie || !link || !limit) { 
+            showAlert('Fill all fields', 'error'); 
+            return; 
+        }
+
+        const shareBtn = document.getElementById('shareBtn');
+        const pc = document.getElementById('progressContainer');
+        const currentShareId = document.getElementById('currentShareId');
+        const shareStatus = document.getElementById('shareStatus');
+        
+        shareBtn.disabled = true;
+        shareBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> starting...';
+        pc.style.display = 'block';
+        shareStatus.innerText = 'Starting share process...';
+
+        try {
+            const response = await fetch('/api/share', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cookie, link, limit })
+            });
+
+            const data = await response.json();
+            
+            if (data.status) {
+                showAlert('Share started successfully!', 'success');
+                currentShareId.innerText = `ID: ${data.share_id.substring(0,8)}...`;
+                shareStatus.innerText = 'Processing in background...';
+                
+                // Reset form
+                document.getElementById('cookie').value = '';
+                document.getElementById('link').value = '';
+                
+                // Start polling for updates
+                startPolling(data.share_id);
+            } else {
+                showAlert(data.message || 'Share failed', 'error');
+                pc.style.display = 'none';
+            }
+        } catch (error) {
+            showAlert('Network error', 'error');
+            pc.style.display = 'none';
+        } finally {
+            shareBtn.disabled = false;
+            shareBtn.innerHTML = '<i class="fas fa-rocket"></i> Start sharing';
+            
+            // Refresh lists
+            loadRunningShares();
+            loadHistory();
+        }
+    });
+
+    // ================== POLLING FOR SHARE UPDATES ==================
+    function startPolling(shareId) {
+        let pollCount = 0;
+        const maxPolls = 60; // Poll for 60 times (5 minutes if 5s interval)
+        
+        const interval = setInterval(async () => {
+            try {
+                const response = await fetch(`/api/share/${shareId}`);
+                const data = await response.json();
+                
+                if (data.status) {
+                    const shareStatus = document.getElementById('shareStatus');
+                    
+                    if (data.type === 'running') {
+                        shareStatus.innerText = `Progress: ${data.share.success}/${data.share.requested} shares`;
+                    } else {
+                        // Moved to history - completed or failed
+                        shareStatus.innerText = `Completed: ${data.share.success}/${data.share.requested} shares (${data.share.status})`;
+                        clearInterval(interval);
+                        
+                        // Hide progress after 3 seconds
+                        setTimeout(() => {
+                            document.getElementById('progressContainer').style.display = 'none';
+                        }, 3000);
+                    }
+                    
+                    // Refresh lists
+                    loadRunningShares();
+                    loadHistory();
+                }
+                
+                pollCount++;
+                if (pollCount >= maxPolls) {
+                    clearInterval(interval);
+                    document.getElementById('shareStatus').innerText = 'Polling stopped - refresh manually';
+                }
+            } catch (error) {
+                console.error('Polling error:', error);
+            }
+        }, 5000);
+    }
+
+    // ================== LOAD RUNNING SHARES ==================
+    window.loadRunningShares = async function() {
+        const loading = document.getElementById('runningLoading');
+        const content = document.getElementById('runningContent');
+        const noRunning = document.getElementById('noRunningShares');
+        
+        loading.style.display = 'flex';
+        content.style.display = 'none';
+        noRunning.style.display = 'none';
+
+        try {
+            const response = await fetch('/api/running-shares');
+            const data = await response.json();
+            
+            if (data.status && data.running_shares.length > 0) {
+                let html = '';
+                data.running_shares.forEach(r => {
+                    const pct = (r.success / r.requested) * 100;
+                    const startTime = new Date(r.startTime).toLocaleTimeString();
+                    
+                    html += `<div class="running-item">
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                            <span style="font-weight:500;">${r.link.slice(0,35)}…</span>
+                            <span class="status-badge status-processing">processing</span>
+                        </div>
+                        <div style="margin:10px 0 5px; font-size:0.9rem;">✅ ${r.success}/${r.requested}</div>
+                        <div class="progress-bar" style="height:6px;">
+                            <div style="width:${pct}%; height:100%; background:var(--warning); border-radius:20px;"></div>
+                        </div>
+                        <div style="font-size:0.7rem; color:var(--text-tertiary); margin-top:5px;">started ${startTime}</div>
+                    </div>`;
+                });
+                content.innerHTML = html;
+                content.style.display = 'block';
+            } else {
+                noRunning.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error loading running shares:', error);
+            noRunning.innerHTML = 'Error loading data';
+            noRunning.style.display = 'block';
+        } finally {
+            loading.style.display = 'none';
+        }
+    };
+
+    // ================== LOAD HISTORY ==================
+    window.loadHistory = async function() {
+        const loading = document.getElementById('historyLoading');
+        const content = document.getElementById('historyContent');
+        
+        loading.style.display = 'flex';
+        content.style.display = 'none';
+
+        try {
+            const response = await fetch('/api/history');
+            const data = await response.json();
+            
+            if (data.status && data.history.length > 0) {
+                let html = '';
+                data.history.forEach(h => {
+                    const statusClass = h.status === 'completed' ? 'status-completed' : 'status-failed';
+                    const time = new Date(h.endTime || h.startTime).toLocaleTimeString();
+                    
+                    html += `<div class="history-item">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="font-weight:500;">${h.link.slice(0,35)}…</span>
+                            <span class="status-badge ${statusClass}">${h.status}</span>
+                        </div>
+                        <div style="margin-top:8px; color:var(--text-tertiary); font-size:0.9rem;">
+                            ✓ ${h.success}/${h.requested} · ${time}
+                        </div>
+                    </div>`;
+                });
+                content.innerHTML = html;
+            } else {
+                content.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-tertiary);">no history yet</div>';
+            }
+        } catch (error) {
+            console.error('Error loading history:', error);
+            content.innerHTML = '<div style="padding:20px; text-align:center; color:var(--danger);">Error loading history</div>';
+        } finally {
+            content.style.display = 'block';
+            loading.style.display = 'none';
+        }
+    };
+
+    // ================== DONATION COPY ==================
+    window.copyDonationInfo = () => {
+        navigator.clipboard.writeText('09979939317')
+            .then(() => showAlert('GCash number copied', 'success'))
+            .catch(() => showAlert('Press Ctrl+C to copy', 'error'));
+    };
+
+    // Initial load
+    loadRunningShares();
+    loadHistory();
+
+    // Auto-refresh running every 5 seconds
+    setInterval(loadRunningShares, 5000);
+    // Auto-refresh history every 15 seconds
+    setInterval(loadHistory, 15000);
+</script>
 </body>
 </html>
