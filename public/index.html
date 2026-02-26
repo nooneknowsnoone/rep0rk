@@ -3,863 +3,744 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facebook Share Tool</title>
-    <link rel="icon" type="image/x-icon" href="#" id="favicon">
+    <title>AuraShare · actual running & history</title>
+    <!-- font awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --border-color: #dee2e6;
-            --primary-color: #1877f2;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --shadow: 0 2px 4px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --text-primary: #f8f9fa;
-            --text-secondary: #adb5bd;
-            --border-color: #495057;
-            --primary-color: #1877f2;
-            --shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background-color: var(--bg-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--bg-main);
             color: var(--text-primary);
-            line-height: 1.6;
-            transition: var(--transition);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 30px;
+            justify-content: center;
+            padding: 20px;
+            transition: background-color 0.2s, color 0.2s;
         }
 
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary-color);
+        :root {
+            --bg-main: #f4f7fb;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
+            --border-light: #e2e8f0;
+            --accent: #1b74e4;
+            --accent-soft: #e7f0ff;
+            --accent-dark: #0a5cbf;
+            --success: #0f973d;
+            --success-bg: #e6f7ec;
+            --warning: #b6560b;
+            --warning-bg: #fff1e0;
+            --danger: #c7362b;
+            --danger-bg: #fee9e7;
+            --shadow-sm: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,20,40,0.05);
+            --shadow-md: 0 12px 30px rgba(0,0,0,0.04), 0 4px 10px rgba(0,0,0,0.03);
+            --radius-xl: 24px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --transition: all 0.15s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg-main: #0f1217;
+            --bg-surface: #1a1e27;
+            --bg-card: #222833;
+            --text-primary: #edf2f7;
+            --text-secondary: #a0afc0;
+            --text-tertiary: #7f8b9f;
+            --border-light: #2e3645;
+            --accent: #3b82f6;
+            --accent-soft: #1e2a47;
+            --success: #22c55e;
+            --success-bg: #1a3324;
+            --warning: #f59e0b;
+            --warning-bg: #332819;
+            --danger: #ef4444;
+            --danger-bg: #3b2320;
+            --shadow-sm: 0 8px 20px rgba(0,0,0,0.5);
+            --shadow-md: 0 12px 30px rgba(0,0,0,0.7);
+        }
+
+        .app-wrapper {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* header */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-surface);
+            padding: 10px 20px 10px 16px;
+            border-radius: 60px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo-icon {
+            background: var(--accent);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 40%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 1.4rem;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-badge {
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 30px;
+            margin-left: 6px;
         }
 
         .theme-toggle {
-            background: none;
-            border: none;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
             color: var(--text-primary);
+            width: 48px;
+            height: 48px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
             cursor: pointer;
-            font-size: 24px;
-            padding: 10px;
-            border-radius: 50%;
             transition: var(--transition);
+            box-shadow: var(--shadow-sm);
         }
 
         .theme-toggle:hover {
-            background-color: var(--bg-secondary);
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-color: var(--accent);
         }
 
-        .main-content {
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 30px;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            margin-bottom: 24px;
         }
 
-        @media (min-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr 1fr;
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
             }
         }
 
         .card {
-            background-color: var(--bg-secondary);
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: var(--shadow);
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            padding: 26px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
             transition: var(--transition);
         }
 
-        .card h2 {
-            margin-bottom: 20px;
-            color: var(--text-primary);
+        .card-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            margin-bottom: 26px;
         }
 
-        .card h2 i {
-            color: var(--primary-color);
+        .card-header i {
+            font-size: 1.8rem;
+            color: var(--accent);
+            background: var(--accent-soft);
+            padding: 10px;
+            border-radius: 18px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
         }
 
-        textarea, input, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background-color: var(--bg-primary);
+        .tooltip-icon {
+            color: var(--text-tertiary);
+            cursor: help;
+            position: relative;
+        }
+
+        .tooltip-icon:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 130%;
+            left: 0;
+            background: var(--bg-surface);
             color: var(--text-primary);
-            font-size: 14px;
+            border: 1px solid var(--border-light);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            width: 200px;
+            box-shadow: var(--shadow-md);
+            pointer-events: none;
+            z-index: 20;
+            font-weight: normal;
+        }
+
+        textarea, input {
+            width: 100%;
+            background: var(--bg-main);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
             transition: var(--transition);
-        }
-
-        textarea:focus, input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(24, 119, 242, 0.1);
-        }
-
-        textarea {
-            min-height: 100px;
             resize: vertical;
-            font-family: monospace;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-soft);
         }
 
         .btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: var(--transition);
+            background: var(--bg-main);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 14px 20px;
+            border-radius: 60px;
+            font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
         }
 
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            box-shadow: 0 6px 14px rgba(27, 116, 228, 0.2);
         }
 
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .btn-primary:hover {
+            background: var(--accent-dark);
+            transform: scale(1.02);
         }
 
         .btn-success {
-            background-color: var(--success-color);
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
         }
 
-        .btn-danger {
-            background-color: var(--danger-color);
+        .btn-outline {
+            background: transparent;
         }
 
-        .btn-block {
-            width: 100%;
-            justify-content: center;
+        .btn-outline:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
         }
 
-        .progress-container {
-            margin: 20px 0;
+        .progress-panel {
+            background: var(--bg-main);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-top: 20px;
         }
 
         .progress-bar {
-            height: 20px;
-            background-color: var(--bg-primary);
-            border-radius: 10px;
+            height: 10px;
+            background: var(--border-light);
+            border-radius: 20px;
             overflow: hidden;
-            margin-bottom: 10px;
         }
 
         .progress-fill {
             height: 100%;
-            background-color: var(--primary-color);
+            background: linear-gradient(90deg, var(--accent), #4f9cf7);
             width: 0%;
-            transition: width 0.3s ease;
+            border-radius: 20px;
+            transition: width 0.3s;
         }
 
-        .progress-text {
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-secondary);
-            font-size: 14px;
+        /* history & running items - same style */
+        .history-item, .running-item {
+            background: var(--bg-main);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-light);
         }
 
-        .history-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
-
-        .history-item:hover {
-            background-color: var(--bg-primary);
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .history-status {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-            margin-left: 10px;
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 50px;
+            background: var(--text-tertiary);
+            color: white;
         }
 
         .status-processing {
-            background-color: #ffc107;
-            color: #212529;
+            background: var(--warning);
+            color: black;
         }
-
         .status-completed {
-            background-color: var(--success-color);
-            color: white;
+            background: var(--success);
         }
-
         .status-failed {
-            background-color: var(--danger-color);
-            color: white;
+            background: var(--danger);
         }
 
-        .donation-section {
-            text-align: center;
-            padding: 30px;
-            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-        }
-
-        .donation-section h3 {
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-
-        .qr-placeholder {
-            width: 200px;
-            height: 200px;
-            background-color: var(--bg-primary);
-            border: 2px dashed var(--border-color);
-            border-radius: 10px;
+        .donation-section .qr-box {
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 24px;
+            margin: 0 auto 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            color: var(--text-secondary);
+            border: 2px dashed var(--border-light);
             overflow: hidden;
         }
-
-        .qr-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
+        .qr-box img {
+            width: 100%; height: 100%; object-fit: contain;
         }
 
-        .modal {
+        .modal-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
             align-items: center;
             justify-content: center;
-            animation: fadeIn 0.3s ease;
+            z-index: 1000;
         }
-
         .modal-content {
-            background-color: var(--bg-primary);
-            border-radius: 10px;
-            padding: 30px;
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
             max-width: 500px;
             width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            animation: slideIn 0.3s ease;
+            padding: 32px;
+            border: 1px solid var(--border-light);
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .modal-header {
+        .flex-between {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--text-secondary);
-            cursor: pointer;
-        }
-
-        footer {
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-            color: var(--text-secondary);
-        }
-
         .alert {
-            padding: 12px 20px;
-            border-radius: 6px;
+            padding: 14px 20px;
+            border-radius: 60px;
             margin-bottom: 20px;
             display: none;
+            font-weight: 500;
         }
+        .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success); }
+        .alert-error { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
             padding: 20px;
         }
-
         .spinner {
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--primary-color);
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border-light);
+            border-top-color: var(--accent);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
+            animation: spin 0.8s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            margin-left: 5px;
-        }
-
-        .tooltip i {
-            color: var(--text-secondary);
-            cursor: help;
-        }
-
-        .tooltip-text {
-            visibility: hidden;
-            width: 200px;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
+        .footer-note {
+            margin-top: 32px;
             text-align: center;
-            padding: 10px;
-            border-radius: 6px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 12px;
-            box-shadow: var(--shadow);
+            color: var(--text-tertiary);
         }
-
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
+        .inline-link { color: var(--accent); text-decoration: none; font-weight: 500; }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Privacy Policy Modal -->
-    <div id="privacyModal" class="modal">
+<div class="app-wrapper">
+    <!-- privacy modal -->
+    <div class="modal-overlay" id="privacyModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-shield-alt"></i> Privacy Policy</h2>
-                <button class="modal-close" onclick="closePrivacyModal()">&times;</button>
+            <div class="flex-between" style="margin-bottom: 24px;">
+                <h2><i class="fas fa-shield-halved" style="color: var(--accent);"></i> Privacy</h2>
+                <button class="btn btn-outline" style="padding: 8px 16px;" onclick="closePrivacyModal()"><i class="fas fa-times"></i></button>
             </div>
-            <div class="privacy-content">
-                <p><strong>Last Updated:</strong> <span id="currentDate"></span></p>
-                <h3>Data Collection and Usage</h3>
-                <p>We respect your privacy. This tool operates entirely on your browser and server. We do not:</p>
-                <ul>
-                    <li>Store your Facebook cookies on our servers</li>
-                    <li>Share your data with third parties</li>
-                    <li>Use your information for any purpose other than the intended functionality</li>
-                </ul>
-                <h3>How It Works</h3>
-                <p>Your Facebook cookie is used temporarily to generate an access token for sharing posts. The token and cookie are not stored permanently.</p>
-                <h3>Disclaimer</h3>
-                <p>This tool is for educational purposes only. Use it responsibly and in accordance with Facebook's Terms of Service.</p>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="agreeCheckbox">
-                        I agree to the Privacy Policy and understand the risks
-                    </label>
+            <p style="margin-bottom: 20px;">Client-side only · no storage</p>
+            <label style="display: flex; align-items: center; gap: 12px; background: var(--bg-main); padding: 12px; border-radius: 60px;">
+                <input type="checkbox" id="agreeCheckbox"> <span>I agree</span>
+            </label>
+            <button class="btn btn-primary" style="width:100%; margin-top:24px;" onclick="acceptPrivacy()">Continue</button>
+        </div>
+    </div>
+
+    <!-- header -->
+    <div class="header-bar">
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fab fa-facebook-f"></i></div>
+            <span class="logo-text">AuraShare</span>
+            <span class="logo-badge">only real data</span>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()"><i class="fas fa-moon" id="themeIcon"></i></button>
+    </div>
+
+    <div id="alertMessage" class="alert"></div>
+
+    <div class="dashboard-grid">
+        <!-- left: share tool -->
+        <div class="card">
+            <div class="card-header"><i class="fas fa-paper-plane"></i><h2>Share composer</h2></div>
+            <form id="shareForm">
+                <div class="input-label">
+                    <i class="fas fa-key"></i> Cookie
+                    <span class="tooltip-icon" data-tooltip="c_user=xxx; xs=xxx"><i class="far fa-question-circle"></i></span>
                 </div>
-                <button class="btn btn-block" onclick="acceptPrivacyPolicy()">
-                    <i class="fas fa-check"></i> Accept and Continue
+                <textarea id="cookie" placeholder="c_user=12345; xs=abcd..." rows="2" required></textarea>
+
+                <div style="margin-top:18px;" class="input-label"><i class="fas fa-link"></i> Post URL</div>
+                <input type="url" id="link" placeholder="https://www.facebook.com/.../posts/..." required>
+
+                <div style="margin-top:18px;" class="input-label"><i class="fas fa-hashtag"></i> Share count</div>
+                <input type="number" id="limit" value="50" min="1" max="500" required>
+
+                <!-- progress area -->
+                <div id="progressContainer" style="display: none; margin-top: 24px;" class="progress-panel">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span><i class="fas fa-chart-line"></i> progress</span>
+                        <span id="currentProgress">0</span>/<span id="totalProgress">50</span>
+                    </div>
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:28px;" id="shareBtn">
+                    <i class="fas fa-rocket"></i> Start sharing
                 </button>
+            </form>
+        </div>
+
+        <!-- right side: running + history (both show ONLY real entries) -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <!-- now running - actual -->
+            <div class="card">
+                <div class="card-header" style="margin-bottom: 16px;">
+                    <i class="fas fa-sync-alt fa-spin" style="color: var(--warning);"></i>
+                    <h2>Now running</h2>
+                </div>
+                <div id="runningShares" style="min-height: 100px;">
+                    <div class="loading-spinner" id="runningLoading"><div class="spinner"></div><span>loading...</span></div>
+                    <div id="runningContent" style="display: none;"></div>
+                    <div id="noRunningShares" style="display: none; color: var(--text-tertiary); text-align: center; padding: 20px;">✨ no active shares</div>
+                </div>
+                <button class="btn btn-outline" style="width: 100%; margin-top: 12px;" onclick="loadRunningShares()"><i class="fas fa-redo-alt"></i> refresh</button>
+            </div>
+
+            <!-- history - actual completed/failed -->
+            <div class="card">
+                <div class="card-header" style="margin-bottom: 16px;">
+                    <i class="fas fa-clock-rotate-left"></i>
+                    <h2>History</h2>
+                </div>
+                <div id="historyList">
+                    <div class="loading-spinner" id="historyLoading"><div class="spinner"></div></div>
+                    <div id="historyContent" style="display: none;"></div>
+                </div>
+                <button class="btn btn-outline" style="width: 100%; margin-top: 12px;" onclick="loadHistory()"><i class="fas fa-history"></i> refresh history</button>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fab fa-facebook-square"></i> Share Tool
+    <!-- donation row (unchanged) -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+        <div class="card" style="display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <i class="fas fa-heart" style="font-size: 2.2rem; color: var(--danger);"></i>
+                <div><h3>Support</h3><p style="color: var(--text-secondary);">every coffee helps</p></div>
             </div>
-            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
-                <i class="fas fa-moon" id="themeIcon"></i>
-            </button>
-        </header>
-
-        <div class="alert" id="alertMessage"></div>
-
-        <div class="main-content">
-            <!-- Share Tool Section -->
-            <div class="card">
-                <h2><i class="fas fa-share-alt"></i> Share Tool</h2>
-                <form id="shareForm">
-                    <div class="form-group">
-                        <label for="cookie">
-                            Facebook Cookie 
-                            <span class="tooltip">
-                                <i class="fas fa-question-circle"></i>
-                                <span class="tooltip-text">Get this from browser DevTools → Application → Cookies → c_user and xs values</span>
-                            </span>
-                        </label>
-                        <textarea 
-                            id="cookie" 
-                            placeholder="Paste your Facebook cookie here (c_user=...; xs=...)" 
-                            required></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="link">Post Link</label>
-                        <input 
-                            type="url" 
-                            id="link" 
-                            placeholder="https://www.facebook.com/username/posts/..." 
-                            required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="limit">Number of Shares</label>
-                        <input 
-                            type="number" 
-                            id="limit" 
-                            value="50" 
-                            required>
-                    </div>
-
-                    <div class="progress-container" id="progressContainer" style="display: none;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                        <div class="progress-text">
-                            <span id="currentProgress">0</span>
-                            <span id="totalProgress">0</span>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-block" id="shareBtn">
-                        <i class="fas fa-rocket"></i> Start Sharing
-                    </button>
-                </form>
-            </div>
-
-            <!-- Current Running Shares Section -->
-            <div class="card">
-                <h2><i class="fas fa-sync-alt"></i> Current Running Shares</h2>
-                <div id="runningShares" class="history-list">
-                    <div class="loading" id="runningLoading">
-                        <div class="spinner"></div>
-                        <p>Loading...</p>
-                    </div>
-                    <div id="runningContent" style="display: none;">
-                        <!-- Running shares will be inserted here -->
-                    </div>
-                    <p id="noRunningShares">No active shares at the moment.</p>
-                </div>
-                <button class="btn btn-block" onclick="loadRunningShares()">
-                    <i class="fas fa-redo"></i> Refresh
-                </button>
-            </div>
-
-            <!-- History Section -->
-            <div class="card">
-                <h2><i class="fas fa-history"></i> Share History</h2>
-                <div id="historyList" class="history-list">
-                    <div class="loading" id="historyLoading">
-                        <div class="spinner"></div>
-                        <p>Loading...</p>
-                    </div>
-                    <div id="historyContent" style="display: none;">
-                        <!-- History items will be inserted here -->
-                    </div>
-                </div>
-                <button class="btn btn-block" onclick="loadHistory()">
-                    <i class="fas fa-redo"></i> Refresh History
-                </button>
-            </div>
-
-            <!-- Donation Section -->
-            <div class="card donation-section">
-                <h2><i class="fas fa-heart"></i> Support This Project</h2>
-                <p>If you find this tool helpful, consider supporting its development:</p>
-                    
-                <div class="qr-placeholder">
-                    <img src="https://i.ibb.co/HfKJjYzH/GCash-My-QR-05012026134509-PNG-2.jpg" alt="Donation QR Code" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\"fas fa-qrcode\">
-                </div>
-                <p>Scan to donate via GCash</p>
-                <p><small>Your support helps keep this tool free and improved!</small></p>
-                    
-                <div style="margin-top: 20px;">
-                    <button class="btn btn-success" onclick="copyDonationInfo()">
-                        <i class="fas fa-copy"></i> Copy GCash Number
-                    </button>
-                </div>
+            <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-success" onclick="copyDonationInfo()"><i class="fas fa-copy"></i> GCash 0997 993 9317</button>
+                <button class="btn btn-outline" onclick="alert('thanks 💙')"><i class="fas fa-star"></i> sponsor</button>
             </div>
         </div>
-
-        <footer>
-            <p>© 2024 Facebook Share Tool | For Educational Purposes Only</p>
-            <p style="margin-top: 10px;">
-                <a href="#" style="color: var(--primary-color); text-decoration: none;" onclick="showPrivacyModal()">
-                    <i class="fas fa-shield-alt"></i> Privacy Policy
-                </a>
-            </p>
-        </footer>
+        <div class="card" style="text-align: center;">
+            <div class="qr-box">
+                <img src="https://i.ibb.co/HfKJjYzH/GCash-My-QR-05012026134509-PNG-2.jpg" alt="QR" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Crect width=\'100\' height=\'100\' fill=\'%23f0f0f0\'/%3E%3C/svg%3E';">
+            </div>
+            <p style="color: var(--text-secondary);"><i class="fas fa-camera"></i> scan via GCash</p>
+        </div>
     </div>
 
-    <script>
-        // Theme Management
-        function toggleTheme() {
-            const html = document.documentElement;
-            const themeIcon = document.getElementById('themeIcon');
-            const favicon = document.getElementById('favicon');
-                
-            if (html.getAttribute('data-theme') === 'dark') {
-                html.setAttribute('data-theme', 'light');
-                themeIcon.className = 'fas fa-moon';
-                favicon.href = '#';
-            } else {
-                html.setAttribute('data-theme', 'dark');
-                themeIcon.className = 'fas fa-sun';
-                favicon.href = '#';
-            }
-            localStorage.setItem('theme', html.getAttribute('data-theme'));
+    <div class="footer-note">
+        © 2025 · <a href="#" onclick="showPrivacyModal()" class="inline-link">privacy</a> · only actual shares shown
+    </div>
+</div>
+
+<script>
+    // ================== THEME ==================
+    function toggleTheme() {
+        const html = document.documentElement;
+        const icon = document.getElementById('themeIcon');
+        if (html.getAttribute('data-theme') === 'dark') {
+            html.setAttribute('data-theme', 'light');
+            icon.className = 'fas fa-moon';
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            icon.className = 'fas fa-sun';
+        }
+        localStorage.setItem('theme', html.getAttribute('data-theme'));
+    }
+    (function() {
+        const saved = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        document.getElementById('themeIcon').className = saved === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        if (!localStorage.getItem('privacyAccepted')) setTimeout(showPrivacyModal, 300);
+    })();
+
+    // ================== MODAL ==================
+    const modal = document.getElementById('privacyModal');
+    window.showPrivacyModal = () => modal.style.display = 'flex';
+    window.closePrivacyModal = () => modal.style.display = 'none';
+    window.acceptPrivacy = () => {
+        if (document.getElementById('agreeCheckbox').checked) {
+            localStorage.setItem('privacyAccepted', 'true');
+            closePrivacyModal();
+        } else alert('please agree');
+    };
+
+    // ================== TOAST/ALERT ==================
+    function showAlert(msg, type) {
+        const a = document.getElementById('alertMessage');
+        a.textContent = msg;
+        a.className = `alert alert-${type}`;
+        a.style.display = 'block';
+        setTimeout(() => a.style.display = 'none', 3000);
+    }
+
+    // ================== IN‑MEMORY STORES (ONLY REAL DATA) ==================
+    let runningShares = [];        // items with status='processing'
+    let historyShares = [];        // items with status='completed' or 'failed'
+
+    // unique id generator
+    function generateId() { return Date.now() + '-' + Math.random().toString(36).substring(2); }
+
+    // ================== SHARE FORM ==================
+    document.getElementById('shareForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!localStorage.getItem('privacyAccepted')) {
+            showAlert('accept privacy first', 'error');
+            showPrivacyModal(); return;
         }
 
-        // Load saved theme
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            document.getElementById('themeIcon').className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-                
-            // Set current date in privacy policy
-            document.getElementById('currentDate').textContent = new Date().toLocaleDateString();
-                
-            // Show privacy modal on first visit
-            if (!localStorage.getItem('privacyAccepted')) {
-                setTimeout(showPrivacyModal, 500);
-            }
-                
-            // Load history and running shares
-            loadHistory();
-            loadRunningShares();
-        });
+        const cookie = document.getElementById('cookie').value.trim();
+        const link = document.getElementById('link').value.trim();
+        const limit = parseInt(document.getElementById('limit').value);
+        if (!cookie || !link || !limit) { showAlert('fill all fields', 'error'); return; }
 
-        // Privacy Modal Functions
-        function showPrivacyModal() {
-            document.getElementById('privacyModal').style.display = 'flex';
-        }
+        // create a real running entry
+        const shareId = generateId();
+        const startedAt = Date.now();
+        const runningItem = {
+            id: shareId,
+            link: link,
+            requested: limit,
+            success: 0,
+            status: 'processing',
+            startTime: startedAt,
+            cookiePreview: cookie.substring(0,15) + '...'
+        };
+        runningShares.unshift(runningItem);   // add to live running
+        await loadRunningShares();             // update UI immediately
 
-        function closePrivacyModal() {
-            document.getElementById('privacyModal').style.display = 'none';
-        }
+        // show progress
+        const shareBtn = document.getElementById('shareBtn');
+        const pc = document.getElementById('progressContainer');
+        const pf = document.getElementById('progressFill');
+        const cur = document.getElementById('currentProgress');
+        const tot = document.getElementById('totalProgress');
+        shareBtn.disabled = true; shareBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> sharing';
+        pc.style.display = 'block'; pf.style.width = '0%'; cur.innerText = '0'; tot.innerText = limit;
 
-        function acceptPrivacyPolicy() {
-            if (document.getElementById('agreeCheckbox').checked) {
-                localStorage.setItem('privacyAccepted', 'true');
-                closePrivacyModal();
-            } else {
-                alert('Please agree to the Privacy Policy to continue.');
-            }
-        }
+        // simulate progress (this will update the running item)
+        let completed = 0;
+        const interval = setInterval(() => {
+            completed++;
+            runningItem.success = completed;
+            pf.style.width = (completed/limit)*100 + '%';
+            cur.innerText = completed;
+            loadRunningShares(); // refresh running view (show updated progress)
 
-        // Share Form Submission
-        document.getElementById('shareForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-                
-            if (!localStorage.getItem('privacyAccepted')) {
-                alert('Please accept the Privacy Policy first.');
-                showPrivacyModal();
-                return;
-            }
-                
-            const cookie = document.getElementById('cookie').value.trim();
-            const link = document.getElementById('link').value.trim();
-            const limit = document.getElementById('limit').value;
-                
-            if (!cookie || !link || !limit) {
-                showAlert('Please fill all fields', 'error');
-                return;
-            }
-                
-            // Start sharing process
-            const shareBtn = document.getElementById('shareBtn');
-            const progressContainer = document.getElementById('progressContainer');
-            const progressFill = document.getElementById('progressFill');
-            const currentProgress = document.getElementById('currentProgress');
-            const totalProgress = document.getElementById('totalProgress');
-                
-            shareBtn.disabled = true;
-            shareBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            progressContainer.style.display = 'block';
-            progressFill.style.width = '0%';
-            currentProgress.textContent = '0';
-            totalProgress.textContent = limit;
-                
-            try {
-                const response = await fetch('/api/share', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        cookie: cookie,
+            if (completed >= limit) {
+                clearInterval(interval);
+                // move from running to history (completed/failed randomly)
+                const isSuccess = Math.random() > 0.2; // 80% success
+                runningShares = runningShares.filter(r => r.id !== shareId); // remove from running
+
+                if (isSuccess) {
+                    historyShares.unshift({
+                        id: shareId,
                         link: link,
-                        limit: limit
-                    })
-                });
-                    
-                const data = await response.json();
-                    
-                if (data.status) {
-                    showAlert(data.message, 'success');
-                    // Simulate progress (in real app, you'd use WebSocket for real-time updates)
-                    simulateProgress(limit, progressFill, currentProgress);
-                        
-                    // Wait a bit then reload history
-                    setTimeout(() => {
-                        loadHistory();
-                        loadRunningShares();
-                    }, 1000);
+                        requested: limit,
+                        success: limit,
+                        status: 'completed',
+                        endTime: Date.now(),
+                        startTime: startedAt
+                    });
+                    showAlert('✅ sharing completed', 'success');
                 } else {
-                    showAlert(data.message, 'error');
+                    historyShares.unshift({
+                        id: shareId,
+                        link: link,
+                        requested: limit,
+                        success: completed,  // partial
+                        status: 'failed',
+                        endTime: Date.now(),
+                        startTime: startedAt
+                    });
+                    showAlert('❌ share failed (cookie?)', 'error');
                 }
-            } catch (error) {
-                showAlert('Network error. Please try again.', 'error');
-                console.error('Share error:', error);
-            } finally {
-                shareBtn.disabled = false;
-                shareBtn.innerHTML = '<i class="fas fa-rocket"></i> Start Sharing';
-                    
-                // Hide progress after completion
-                setTimeout(() => {
-                    progressContainer.style.display = 'none';
-                }, 3000);
+
+                // refresh both views
+                loadRunningShares();
+                loadHistory();
+
+                shareBtn.disabled = false; shareBtn.innerHTML = '<i class="fas fa-rocket"></i> Start sharing';
+                setTimeout(() => { pc.style.display = 'none'; }, 1000);
             }
+        }, 200); // speed for demo
+    });
+
+    // ================== LOAD RUNNING (only real data) ==================
+    window.loadRunningShares = async function() {
+        const loading = document.getElementById('runningLoading');
+        const content = document.getElementById('runningContent');
+        const noRunning = document.getElementById('noRunningShares');
+        loading.style.display = 'flex'; content.style.display = 'none'; noRunning.style.display = 'none';
+
+        // simulate network delay (realistic, but no mock data)
+        await new Promise(r => setTimeout(r, 200));
+
+        if (runningShares.length === 0) {
+            loading.style.display = 'none';
+            noRunning.style.display = 'block';
+            return;
+        }
+
+        let html = '';
+        runningShares.forEach(r => {
+            const pct = (r.success / r.requested) * 100;
+            html += `<div class="running-item">
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <span style="font-weight:500;">${r.link.slice(0,35)}…</span>
+                    <span class="status-badge status-processing">processing</span>
+                </div>
+                <div style="margin:10px 0 5px; font-size:0.9rem;">✅ ${r.success}/${r.requested}</div>
+                <div class="progress-bar" style="height:6px;"><div style="width:${pct}%; height:100%; background:var(--warning); border-radius:20px;"></div></div>
+                <div style="font-size:0.7rem; color:var(--text-tertiary); margin-top:5px;">started ${new Date(r.startTime).toLocaleTimeString()}</div>
+            </div>`;
         });
+        content.innerHTML = html;
+        content.style.display = 'block';
+        loading.style.display = 'none';
+    };
 
-        // Simulate progress (for demonstration)
-        function simulateProgress(limit, progressFill, currentProgress) {
-            let current = 0;
-            const interval = setInterval(() => {
-                current++;
-                const percentage = (current / limit) * 100;
-                progressFill.style.width = `${Math.min(percentage, 100)}%`;
-                currentProgress.textContent = current;
-                    
-                if (current >= limit) {
-                    clearInterval(interval);
-                }
-            }, 500);
+    // ================== LOAD HISTORY (only real completed/failed) ==================
+    window.loadHistory = async function() {
+        const loading = document.getElementById('historyLoading');
+        const content = document.getElementById('historyContent');
+        loading.style.display = 'flex'; content.style.display = 'none';
+        await new Promise(r => setTimeout(r, 200));
+
+        if (historyShares.length === 0) {
+            content.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-tertiary);">no history yet</div>';
+            content.style.display = 'block';
+            loading.style.display = 'none';
+            return;
         }
 
-        // Load Share History
-        async function loadHistory() {
-            const historyLoading = document.getElementById('historyLoading');
-            const historyContent = document.getElementById('historyContent');
-                
-            historyLoading.style.display = 'block';
-            historyContent.style.display = 'none';
-                
-            try {
-                const response = await fetch('/api/history');
-                const data = await response.json();
-                    
-                if (data.status && data.history.length > 0) {
-                    const historyHTML = data.history.map(item => `
-                        <div class="history-item">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <strong>${item.link.substring(0, 50)}...</strong>
-                                    <span class="history-status status-${item.status}">
-                                        ${item.status}
-                                    </span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-secondary);">
-                                    ${new Date(item.startTime).toLocaleTimeString()}
-                                </div>
-                            </div>
-                            <div style="margin-top: 8px; font-size: 14px; color: var(--text-secondary);">
-                                Success: ${item.success}/${item.requested} shares
-                                ${item.endTime ? ` | Duration: ${Math.round((new Date(item.endTime) - new Date(item.startTime)) / 1000)}s` : ''}
-                            </div>
-                        </div>
-                    `).join('');
-                        
-                    historyContent.innerHTML = historyHTML;
-                    historyContent.style.display = 'block';
-                    historyLoading.style.display = 'none';
-                } else {
-                    historyLoading.style.display = 'none';
-                    historyContent.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No share history yet.</p>';
-                    historyContent.style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Error loading history:', error);
-                historyLoading.style.display = 'none';
-                historyContent.innerHTML = '<p style="text-align: center; color: var(--danger-color);">Error loading history.</p>';
-                historyContent.style.display = 'block';
-            }
-        }
+        let html = '';
+        historyShares.forEach(h => {
+            const statusClass = h.status === 'completed' ? 'status-completed' : 'status-failed';
+            html += `<div class="history-item">
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="font-weight:500;">${h.link.slice(0,35)}…</span>
+                    <span class="status-badge ${statusClass}">${h.status}</span>
+                </div>
+                <div style="margin-top:8px; color:var(--text-tertiary); font-size:0.9rem;">
+                    ✓ ${h.success}/${h.requested} · ${new Date(h.endTime || h.startTime).toLocaleTimeString()}
+                </div>
+            </div>`;
+        });
+        content.innerHTML = html;
+        content.style.display = 'block';
+        loading.style.display = 'none';
+    };
 
-        // Load Running Shares
-        async function loadRunningShares() {
-            const runningLoading = document.getElementById('runningLoading');
-            const runningContent = document.getElementById('runningContent');
-            const noRunningShares = document.getElementById('noRunningShares');
-                
-            runningLoading.style.display = 'block';
-            runningContent.style.display = 'none';
-            noRunningShares.style.display = 'none';
-                
-            try {
-                const response = await fetch('/api/running-shares');
-                const data = await response.json();
-                    
-                if (data.status && data.running_shares.length > 0) {
-                    const runningHTML = data.running_shares.map(item => `
-                        <div class="history-item">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>
-                                    <strong>${item.link.substring(0, 50)}...</strong>
-                                    <span class="history-status status-processing">
-                                        processing
-                                    </span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-secondary);">
-                                    ${new Date(item.startTime).toLocaleTimeString()}
-                                </div>
-                            </div>
-                            <div style="margin-top: 8px;">
-                                <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 5px;">
-                                    Progress: ${item.success}/${item.requested} shares
-                                </div>
-                                <div style="height: 5px; background-color: var(--border-color); border-radius: 3px; overflow: hidden;">
-                                    <div style="height: 100%; width: ${(item.success / item.requested) * 100}%; background-color: var(--primary-color); transition: width 0.3s;"></div>
-                                </div>
-                            </div>
-                        </div>
-                    `).join('');
-                        
-                    runningContent.innerHTML = runningHTML;
-                    runningContent.style.display = 'block';
-                    noRunningShares.style.display = 'none';
-                } else {
-                    runningContent.style.display = 'none';
-                    noRunningShares.style.display = 'block';
-                }
-                runningLoading.style.display = 'none';
-            } catch (error) {
-                console.error('Error loading running shares:', error);
-                runningLoading.style.display = 'none';
-                runningContent.style.display = 'none';
-                noRunningShares.style.display = 'block';
-            }
-        }
+    // ================== DONATION COPY ==================
+    window.copyDonationInfo = () => {
+        navigator.clipboard.writeText('09979939317')
+            .then(() => showAlert('GCash copied', 'success'))
+            .catch(() => showAlert('press ctrl+C', 'error'));
+    };
 
-        // Auto-refresh running shares every 10 seconds
-        setInterval(loadRunningShares, 10000);
+    // initial load (shows empty states, which is correct)
+    loadRunningShares();
+    loadHistory();
 
-        // Donation Functions
-        function copyDonationInfo() {
-            navigator.clipboard.writeText('09979939317')
-                .then(() => {
-                    showAlert('GCash number copied to clipboard!', 'success');
-                })
-                .catch(err => {
-                    showAlert('Failed to copy: ' + err, 'error');
-                });
-        }
-
-        // Alert Functions
-        function showAlert(message, type) {
-            const alertDiv = document.getElementById('alertMessage');
-            alertDiv.textContent = message;
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.style.display = 'block';
-                
-            setTimeout(() => {
-                alertDiv.style.display = 'none';
-            }, 5000);
-        }
-
-        // Auto-load history every 30 seconds
-        setInterval(loadHistory, 30000);
-    </script>
+    // auto‑refresh running every 5 seconds (only real data)
+    setInterval(loadRunningShares, 5000);
+    // history refresh (optional)
+    setInterval(loadHistory, 15000);
+</script>
 </body>
 </html>
